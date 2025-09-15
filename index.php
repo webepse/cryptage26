@@ -33,6 +33,9 @@
             }
         ?>
     </div>
+    <div class="text-center mt-3">
+        <a href="verif.php" class="btn btn-success">Démo connexion</a>
+    </div>
 </div>
 </body>
 </html>

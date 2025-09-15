@@ -1,10 +1,10 @@
 <?php
-/**
- * Permet de crypter un mot de passe avec le choix de l'algo
- * @param string $password
- * @param string $algo
- * @return string
- */
+    /**
+     * Permet de crypter un mot de passe avec le choix de l'algo
+     * @param string $password
+     * @param string $algo
+     * @return string
+     */
     function hash_password(string $password, string $algo = PASSWORD_DEFAULT) : string
     {
         switch ($algo)
