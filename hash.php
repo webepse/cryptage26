@@ -35,14 +35,31 @@
 
     if(isset($_POST['password']) && isset($_POST['algo']))
     {
-        $password = $_POST['password'];
-        $algo = $_POST['algo'];
-        $hash = hash_password($password, $algo);
+        if( !empty($_POST['password']) && !empty($_POST['algo']))
+        {
+            $password = $_POST['password'];
+            $algo = $_POST['algo'];
+            $hash = hash_password($password, $algo);
+
+            // insertion dans la bdd
+            // création d'un login
+            $login = "login".rand();
+            require "config/connexion.php";
+
+            /**
+             * @var \PDO $bdd
+             */
+            $insert = $bdd->prepare("INSERT INTO user (login, password, algo) VALUES (:login, :password, :algo)");
+            $insert->execute([
+                ":login" => $login,
+                ":password" => $hash,
+                ":algo" => $algo
+            ]);
+        }
+
     }
 
 ?>
-
-
 
 <!doctype html>
 <html lang="en">
@@ -53,11 +70,12 @@
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-sRIl4kxILFvY47J16cr9ZwB07vP4J8+LH7qKQnuqkuIAvNWLzeN8tE5YBujZqJLB" crossorigin="anonymous">
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js" integrity="sha384-FKyoEForCGlyvwx9Hj09JcYn3nv7wiPVlz7YYwJrWVcXK/BmnVDxM+D2scQbITxI" crossorigin="anonymous"></script>
-    <title>Document</title>
+    <title>Cryptage - Formulaire</title>
 </head>
 <body>
 <div class="container">
     <h1>Crypter mot de passe</h1>
+    <a href="index.php" class="btn btn-secondary my-3">Retour</a>
     <form action="hash.php" method="POST">
         <div class="form-group my-3">
             <label for="password">Mot de passe à crypter</label>
@@ -96,9 +114,9 @@
     <?php
         if(isset($hash))
         {
-            echo '<div class="alert alert-success"><h3>Résultat:</h3>'.$hash.'</div>';
+            echo '<div class="alert alert-success my-3"><h3>Résultat:</h3>'.$hash.'</div>';
+            echo "<div class='alert alert-warning my-2'>Le résultat a été ajouté à la base de données</div>";
         }
-
 
     ?>
 
