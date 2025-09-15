@@ -1,14 +1,21 @@
 <?php
-    // init login
+    // init login pour afficher dans le formulaire
     $login = "";
 
+    // vérification si formulaire envoyé ou non?
     if(isset($_POST['login']) && isset($_POST['password']))
     {
+        // vérification si formulaire a bien été remplis
         if(empty($_POST['login']) || empty($_POST['password']))
         {
+            // bien remplir les champs (erreur)
             $erreur = "Veuillez remplir tous les champs";
         }else{
+            // les champs sont ok donc vérification dans la bdd
+            // vu qu'il y a requête dans la bdd, protèger l'inconnue => login
             $login = htmlspecialchars($_POST['login']);
+
+            // pas besoin et attention au htmlspecialchars car un logo peut/doit contenir des kk spéciaux
             $password = $_POST['password'];
 
             require "config/connexion.php";
@@ -19,23 +26,26 @@
             $select->execute([$login]);
             $data = $select->fetch();
             $select->closeCursor();
+            // vérif du résultat
             if(!$data)
             {
+                // $data n'a pas donné de résultat donc le login n'existe pas
                 $erreur = "Ce login n'existe pas";
             }else{
+                // $login existe bien, on récup les info dont le mot de passe
+                // on compare le mot de passe en clair (que l'utilisateur a donné dans le form) avec le hash de la bdd
                 if(password_verify($password, $data['password']))
                 {
+                    // le mot de passe correspond
                     $valid = "Vos login et mot de passe sont correct";
                 }else{
+                    // le mot de passe ne correspond pas
                     $erreur = "Mot de passe incorrect";
                 }
             }
         }
     }
-
-
 ?>
-
 <!doctype html>
 <html lang="en">
 <head>
@@ -53,6 +63,7 @@
         <?php
             if(isset($erreur))
             {
+                // affichage en cas d'erreur
                 echo "<div class='alert alert-danger my-3'>".$erreur."</div>";
             }
 
@@ -76,6 +87,7 @@
         <?php
             if(isset($valid))
             {
+                // affichage si valide (c'est pour les besoins de l'exercice)
                 echo "<div class='alert alert-success my-3'>".$valid."</div>";
             }
         ?>
